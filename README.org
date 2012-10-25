@@ -1,6 +1,13 @@
-* Maildir
+* Maildir refilter
 maildirrefilter.scm re-applies your sieve rules to mail in a maildir
 folder. So, if you have added new rules to your .sieve rule file,
 mail that previously got stuck in your inbox, will be moved.
+
+There are other solutions, but this one has the following benefits:
+- preserves flags
+- mail that does not trigger a rule is completely untouched
+
+The refilter is written in Guile scheme, and assumes the dovecot
+sieve implementation.
 
 
