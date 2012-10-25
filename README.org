@@ -1,0 +1,6 @@
+* Maildir
+maildirrefilter.scm re-applies your sieve rules to mail in a maildir
+folder. So, if you have added new rules to your .sieve rule file,
+mail that previously got stuck in your inbox, will be moved.
+
+
