@@ -10,4 +10,6 @@ There are other solutions, but this one has the following benefits:
 The refilter is written in Guile scheme, and assumes the dovecot
 sieve implementation.
 
-
+Currently the code is kind of soldered to my configuration, but its
+easy enough to change, and if you would like to try it, I can add
+configuration options.
