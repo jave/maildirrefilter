@@ -11,7 +11,7 @@
 (define (main args)
   (map (lambda (arg) (display arg) (display " "))
                   (cdr args))
-  (begin (map process-mail (directory-files-2  "/home/joakim/Maildir/cur")) '())
+  (begin (map process-mail (directory-files-2  (string-append *maildir* "/cur"))) '())
   (format #t "\n\n ~d messages moved\n" *msgmoved*)
   )
 
@@ -80,11 +80,13 @@
           (format #t " ~d\n" *msgcount*)
           ))
     (if destination
-        (let* ( (destination-path (format #f "/home/joakim/Maildir/.~a/cur/" destination))
+        (let* ( (destination-path (format #f "~a/.~a/cur/" *maildir* destination))
                 (access-path (access? destination-path W_OK)))
           (format #t "\n")
           (format  #t "~amv ~s  ~s\n" (if access-path "" "#") file destination-path)
-          (system (format  #f "~amv ~s  ~s\n" (if access-path "" "#") file destination-path))
+          ;;TODO the "mv" might fail
+          (if (not (equal?   0 (system (format  #f "~amv ~s  ~s\n" (if access-path "" "#") file destination-path))))
+              (exit 1))
           (set! *msgmoved* (+ 1 *msgmoved*)))
         
         ;;(format  #t "leave ~s\n" file )
