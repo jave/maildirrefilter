@@ -82,10 +82,16 @@
     (if destination
         (let* ( (destination-path (format #f "~a/.~a/cur/" *maildir* destination))
                 (access-path (access? destination-path W_OK)))
+          (if (not access-path)
+              (begin
+                  (format #t "folder not found, creating")
+                  (system (format  #f "mkdir -p ~s\n"  destination-path))
+                  )
+              )
           (format #t "\n")
           (format  #t "~amv ~s  ~s\n" (if access-path "" "#") file destination-path)
           ;;TODO the "mv" might fail
-          (if (not (equal?   0 (system (format  #f "~amv ~s  ~s\n" (if access-path "" "#") file destination-path))))
+          (if (not (equal?   0 (system (format  #f "~amv ~s  ~s\n" "" file destination-path))))
               (exit 1))
           (set! *msgmoved* (+ 1 *msgmoved*)))
         
