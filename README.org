@@ -13,3 +13,9 @@ sieve implementation.
 Currently the code is kind of soldered to my configuration, but its
 easy enough to change, and if you would like to try it, I can add
 configuration options.
+
+[2017-05-27 lör] ive added the ability to run the sieve processes in
+parallel. also its possible to use rspamc to classify mails.
+
+the fancy parallell feature requires guile 2.2. If your distro doesn't
+have it yet, you can get it with guix.

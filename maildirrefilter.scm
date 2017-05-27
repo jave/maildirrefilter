@@ -10,7 +10,7 @@
 
 (define (main args)
   (map (lambda (arg) (display arg) (display " "))
-                  (cdr args))
+       (cdr args))
   (begin (map process-mail (directory-files-2  (string-append *maildir* "/cur"))) '())
   (format #t "\n\n ~d messages moved\n" *msgmoved*)
   )
@@ -25,9 +25,9 @@
 	    (closedir dir-stream)
 	    acc)
           (if (or (string=? "."  new)             ;;; ignore
-                        (string=? ".." new))            ;;; ignore
-                    acc
-                    (cons new acc)))
+                  (string=? ".." new))            ;;; ignore
+              acc
+              (cons new acc)))
       acc)))
 
 ;;because directory-file failed to work
@@ -40,14 +40,14 @@
       (if  (not  (or (string=? "."  entry)             
                      (string=? ".." entry)))
            (set! acc (append acc (list  (format  #f "~a/~a" dirname entry))))) )
-      ;(display acc)(newline)
+                                        ;(display acc)(newline)
 
     
     (closedir dir)
     acc))
-  
 
-  
+
+
 
 
 ;;cd /home/joakim/Maildir/cur
@@ -67,11 +67,31 @@
         #f)
     )
   )
+
+(define (test-mail-rspamc file)
+  "see if the mail will be filtered by rspamc. returns the box to filter to, or #f"
+  (let* ((port  (open-input-pipe  (format #f "rspamc ~s 2>&1" file)))
+         (str (read-line port) )
+         (str (read-line port) )
+         (str2 (read-line port) )
+         (match  (string-match "Spam: true" str2)))
+    (close-pipe port)
+    (if match
+        (begin
+          (match:substring match 0)
+          (format #t "rspamc triggered: ~s" file)
+          "rspamd"
+          )
+        #f
+        )
+    ;;#f ;;always false for now
+    )
+  )
 (define *msgcount* 0)
 (define *msgmoved* 0)
 
 (define (process-mail file)
-  (let ((destination (test-mail file)))
+  (let ((destination (test-mail file))) ;;test-mail-rspamc if doing spam, otherwise just test-spam. test-mail-rspamc is very slow atm
     ;;check (access? destination)
     (format #t ".")
     (set! *msgcount* (+ 1 *msgcount*))
@@ -84,9 +104,9 @@
                 (access-path (access? destination-path W_OK)))
           (if (not access-path)
               (begin
-                  (format #t "folder not found, creating")
-                  (system (format  #f "mkdir -p ~s\n"  destination-path))
-                  )
+                (format #t "folder not found, creating")
+                (system (format  #f "mkdir -p ~s\n"  destination-path))
+                )
               )
           (format #t "\n")
           (format  #t "~amv ~s  ~s\n" (if access-path "" "#") file destination-path)
@@ -101,5 +121,5 @@
 
 ;;(test-mail "/home/joakim/Maildir/cur/1300220279.M979683P2628.chopper,S=10309,W=10486:2,S")
 
-;(map test-mail (directory-files-2  "/home/joakim/Maildir/cur"))
-;(begin (map process-mail (directory-files-2  "/home/joakim/Maildir/cur")) '())
+                                        ;(map test-mail (directory-files-2  "/home/joakim/Maildir/cur"))
+                                        ;(begin (map process-mail (directory-files-2  "/home/joakim/Maildir/cur")) '())
